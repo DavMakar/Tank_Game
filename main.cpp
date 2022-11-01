@@ -1,5 +1,5 @@
 #include <ncurses.h>
-#include "game.hpp"
+#include "Game/game.cpp"
 
 int main(){
 
