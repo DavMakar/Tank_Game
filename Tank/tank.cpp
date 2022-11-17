@@ -1,31 +1,42 @@
 #include "tank.hpp"
 
+enum Directions {
+    UP = 0,
+    DOWN = 1,
+    LEFT = 2,
+    RIGHT = 3,
+};
+
 Tank::Tank(WINDOW * w ,int X,int Y){
     X_ = X;
     Y_ = Y;
     win = w;    
 }
 
-bool Tank::can_move(){
-    if(direction == 0){
-        return Y_ > min_Y;
+bool Tank::can_move(auto & map){
+    switch (direction)
+    {
+    case Directions::UP:
+        return !(map[Y_-1][X_]|| map[Y_-1][X_-1]|| map[Y_-1][X_+1]);
+        break;
+    case Directions::DOWN:
+        return !(map[Y_+1][X_]|| map[Y_+1][X_-1]|| map[Y_+1][X_+1]);
+        break;
+    case Directions::LEFT:
+        return !(map[Y_+1][X_-1]|| map[Y_][X_-1]|| map[Y_-1][X_-1]);
+        break;
+    case Directions::RIGHT:
+        return !(map[Y_][X_+1]|| map[Y_-1][X_+1]|| map[Y_+1][X_+1]);
+        break;
+    default:
+        return true;
+        break;
     }
-    if(direction ==1){
-        return Y_ < max_Y;
-    }
-    if(direction == 2){
-        return X_> min_X;
-    }
-    if(direction == 3){
-        return X_< max_X;
-    }
-    
-    return true;
 }
 
 void Tank::display_Tank(){
     if(direction<2){
-        for(int i= -1 ;i<1 ;++i){ //need change
+        for(int i= -1 ;i<1 ;++i){ //FIXME need change
             mvwprintw(win,Y_ + i,X_,tank_pattern_ud[direction][i+1]);
         }
     }else{
@@ -36,53 +47,50 @@ void Tank::display_Tank(){
 };
 
 void Tank::erase_Tank(){
-    // if(direction<2){
-    //     for(int i= -1 ;i<1 ;++i){ 
-    //         mvwprintw(win,Y_ + i,X_,"     ");
-    //     }
-    // }
     for(int i= -1 ;i<2 ;++i){ 
-        mvwprintw(win,Y_ + i,X_,"     ");
+        mvwprintw(win,Y_ + i,X_,"    ");
     }
 };
 
 
-void Tank::go_down(){
-    if(can_move()){
-        erase_Tank();
-        Y_+=1;
-        display_Tank();
-    }
-    
-};
-
-void Tank::go_left(){
-    if(can_move()){
-        erase_Tank();
-        X_-=1;
-        display_Tank();
-    }
-}
-void Tank::go_right(){
-    if(can_move()){
-        erase_Tank();
-        X_+=1;
-        display_Tank();
-    }
-}
-void Tank::go_up(){
-    if(can_move()){
+void Tank::move(){
+    switch (direction)
+    {
+    case Directions::UP:
         erase_Tank();
         Y_-=1;
         display_Tank(); 
+        break;
+    case Directions::DOWN:
+        erase_Tank();
+        Y_+=1;
+        display_Tank();
+        break;
+    case Directions::LEFT:
+        erase_Tank();
+        X_-=1;
+        display_Tank();
+        break;
+    case Directions::RIGHT:
+        erase_Tank();
+        X_+=1;
+        display_Tank();
+        break;
+    default:
+        break;
     }
 };
 
-// TO DO
-//void Tank::shot(){
-// 
-//}
-//
+int Tank::get_x(){
+    return X_;
+};
+int Tank::get_y(){
+    return Y_;
+};
+
+int Tank::get_direction(){
+    return direction;
+};
 
 void Tank::change_direction(int d){
     direction = d;

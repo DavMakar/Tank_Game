@@ -1,17 +1,28 @@
 #include <ncurses.h>
-#include "../Tank/tank.cpp"
+#include "../Tank/tank.hpp"
+#include "../Map/map.hpp"
 
 class Tank_Game
 {
 public:
-    Tank_Game(); // init game
-    bool is_playing();
-    void process_input();
+    Tank_Game();
+    ~Tank_Game();  
+
+    Matrix get_matrix();
+    WINDOW * get_game_window();
+
+    static void init();    
     void update();
+    bool is_playing();
+    void end_game();
 
 private:
-    bool playing = false;
-    WINDOW *game_win;
-    Tank p1;
+    bool playing;
+    WINDOW * game_win;
+    Map game_map;
+    Tank tank_1;
+    
+    friend class Controller;
+    friend class Draw;
 };
 

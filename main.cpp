@@ -1,20 +1,16 @@
-#include <ncurses.h>
-#include "Game/game.cpp"
+#include "Controller/controller.hpp"
+//#include "Draw/draw.hpp"
+//#include "Game/game.hpp"
 
 int main(){
 
-    initscr();    
-    noecho();
-    curs_set(0);
-    
+    Tank_Game::init();
     Tank_Game gm;
-    
+
     while(gm.is_playing()){
-        gm.process_input(); 
+        Controller::process_Input(gm);
         gm.update();
     };
-
-    endwin();
 
     return 0;
 }

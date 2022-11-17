@@ -1,48 +1,49 @@
 #include "game.hpp"
 
 Tank_Game::Tank_Game() : playing{true},
+                         game_map{25, 100},
                          game_win{newwin(25, 100, 10, 10)},
-                         p1{game_win, 15, 10}
+                         tank_1{game_win, 15, 10}
 {
-    refresh();
     box(game_win, 0, 0);
-    wrefresh(game_win);
-    p1.display_Tank();
+    wrefresh(game_win); 
+    game_map.fill_matrix();
+    tank_1.display_Tank();
 }
 
-void Tank_Game::process_input()
+void Tank_Game::init()
 {
-    auto key = wgetch(game_win);
-    if (key == 's')
-    {
-        p1.change_direction(1);
-        p1.go_down();
-    }
-    if (key == 'w')
-    {
-        p1.change_direction(0);
-        p1.go_up();
-    }
-    if (key == 'a')
-    {
-        p1.change_direction(2);
-        p1.go_left();
-    }
-    if (key == 'd')
-    {
-        p1.change_direction(3);
-        p1.go_right();
-    }
-    if (key == 'x')
-    {
-        playing = false;
-    }
-}
+    initscr();
+    noecho();
+    curs_set(0);
+    refresh();
+};
 
-void Tank_Game::update(){
+Matrix Tank_Game::get_matrix(){
+    return game_map.get_matrix();
+};
+
+WINDOW * Tank_Game::get_game_window(){
+    return game_win;
+};
+
+void Tank_Game::update()
+{
     wrefresh(game_win);
+    // TODO view class 
 }
 
-bool Tank_Game::is_playing(){
+bool Tank_Game::is_playing()
+{
     return playing;
+}
+
+void Tank_Game::end_game()
+{
+    playing = false;
+}
+
+Tank_Game::~Tank_Game()
+{
+    endwin();
 }
