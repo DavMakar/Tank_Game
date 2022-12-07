@@ -1,83 +1,63 @@
 #include "tank.hpp"
+#include "bullet.hpp"
 
-enum Directions {
-    UP = 0,
-    DOWN = 1,
-    LEFT = 2,
-    RIGHT = 3,
-};
-
-Tank::Tank(WINDOW * w ,int X,int Y){
-    X_ = X;
-    Y_ = Y;
-    win = w;    
-}
-
-bool Tank::can_move(auto & map){
+bool Tank::can_move(const Matrix& map){
     switch (direction)
     {
     case Directions::UP:
-        return !(map[Y_-1][X_]|| map[Y_-1][X_-1]|| map[Y_-1][X_+1]);
-        break;
+        return !(map[Y_-2][X_]);
     case Directions::DOWN:
-        return !(map[Y_+1][X_]|| map[Y_+1][X_-1]|| map[Y_+1][X_+1]);
-        break;
+        return !(map[Y_+2][X_]);
     case Directions::LEFT:
-        return !(map[Y_+1][X_-1]|| map[Y_][X_-1]|| map[Y_-1][X_-1]);
-        break;
+        return !(map[Y_+1][X_-1] || map[Y_][X_-4]|| map[Y_-1][X_-1]);
     case Directions::RIGHT:
-        return !(map[Y_][X_+1]|| map[Y_-1][X_+1]|| map[Y_+1][X_+1]);
-        break;
+        return !(map[Y_][X_+4] || map[Y_-1][X_+1]|| map[Y_+1][X_+1]);
     default:
-        return true;
-        break;
+        return true;   
     }
 }
 
 void Tank::display_Tank(){
-    if(direction<2){
-        for(int i= -1 ;i<1 ;++i){ //FIXME need change
-            mvwprintw(win,Y_ + i,X_,tank_pattern_ud[direction][i+1]);
-        }
-    }else{
-        for(int i= -1 ;i<2 ;++i){ 
-            mvwprintw(win,Y_ + i,X_,tank_pattern_lr[direction-2][i+1]);
-        }
-    }
+    for(int i= -1 ;i<2 ;++i){ 
+        mvwprintw(win,Y_ + i,X_-1,tank_pattern[direction][i+1]);
+    } 
 };
 
 void Tank::erase_Tank(){
     for(int i= -1 ;i<2 ;++i){ 
-        mvwprintw(win,Y_ + i,X_,"    ");
+        mvwprintw(win,Y_ + i,X_-1,"   ");
     }
 };
 
+void Tank::shot(Matrix & map){
+    Bullet * bullet = new Bullet(win,X_,Y_,direction);
+    bullet->move(map);
+    delete bullet;
+}
 
-void Tank::move(){
-    switch (direction)
-    {
-    case Directions::UP:
+void Tank::move(Directions new_direction , const Matrix& map){
+    if(new_direction != direction){
+        change_direction(new_direction);
+    }
+    else if(can_move(map)){
         erase_Tank();
-        Y_-=1;
-        display_Tank(); 
-        break;
-    case Directions::DOWN:
-        erase_Tank();
-        Y_+=1;
-        display_Tank();
-        break;
-    case Directions::LEFT:
-        erase_Tank();
-        X_-=1;
-        display_Tank();
-        break;
-    case Directions::RIGHT:
-        erase_Tank();
-        X_+=1;
-        display_Tank();
-        break;
-    default:
-        break;
+        switch (direction)
+        {
+            case Directions::UP:
+                Y_-=1;
+                break;
+            case Directions::DOWN:
+                Y_+=1;
+                break;
+            case Directions::LEFT:
+                X_-=1;
+                break;
+            case Directions::RIGHT:
+                X_+=1;
+                break;
+            default:
+                break;
+        }
     }
 };
 
