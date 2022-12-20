@@ -1,36 +1,48 @@
 #include "game.hpp"
 
-Tank_Game::Tank_Game() : playing{true},
-                         game_map{25, 100},
-                         game_win{newwin(25, 100, 10, 10)},
-                         tank_1{game_win, 15, 10}
-{
-    game_map.fill_matrix();
+Game::Game() :  playing{true},
+                game_map{Map_params::height, Map_params::width}              
+{                    
+    game_map.fill_matrix();   
 }
 
-Matrix Tank_Game::get_matrix(){
-    return game_map.game_matrix;
-};
-
-WINDOW * Tank_Game::get_game_window(){
-    return game_win;
-};
-
-// void Tank_Game::update(){
-//     wrefresh(game_win);
-// };
-
-bool Tank_Game::is_playing()
+bool Game::is_playing()
 {
     return playing;
 }
+void Game::update(){
+    game_map.update();
+    if(!(game_map.enemy_tank.is_alive())){
+        end_game();
+        win = true;
+    }else if(!(game_map.player_tank.is_alive())){
+        end_game();
+        game_over = true;
+    }
+}
 
-void Tank_Game::end_game()
+void Game::set_default(){
+    playing = true;
+    win = false;
+    game_over = false;
+
+    game_map.enemy_tank.reset();
+    game_map.player_tank.reset();
+    game_map.fill_matrix();
+}
+
+bool Game::is_lose(){
+    return game_over;
+}
+bool Game::is_win(){
+    return win;
+}
+void Game::end_game()
 {
     playing = false;
 }
 
-Tank_Game::~Tank_Game()
+Game::~Game()
 {
     endwin();
 }

@@ -1,80 +1,53 @@
 #include "bullet.hpp"
-#include <unistd.h>
+//#include <unistd.h>
 
-Bullet::Bullet(WINDOW* win,int x,int y,int dir):game_object(win,x,y){
+Bullet::Bullet(int y,int x,int dir):game_object(y,x){
     direction = dir;
 };
 
-void Bullet::erase(){
-    mvwaddch(win,Y_,X_,' ');
+bool Bullet::is_hit_boundary(){
+    return hit;
 }
 
-void Bullet::display(){
-    mvwaddch(win,Y_,X_,ACS_BULLET);
-}
-
-bool Bullet::detect_collision(Matrix & map){
-    if (map[Y_][X_] == 2){
-        map[Y_][X_] = 0;
-        return true;
-    };
-    return false;
-}
-
-void Bullet::move(Matrix & map){   
+void Bullet::move(const Matrix & matrix){
     switch (direction)
     {
     case Directions::UP:
-        Y_-=2;
-        display();
-        while (Y_>1)
-        { 
-            erase();
+        if(Y_>1){
             --Y_;
-            display();
-            wrefresh(win);
-            usleep(speed);   
-            //TODO thread std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        }
+        else{
+            hit = true;
         }
         break;
     case Directions::DOWN:
-        Y_+=2;
-        display();
-        while (Y_< (map.size()-2))
+        if ( Y_< (matrix.size()-2))
         { 
-            erase();
             ++Y_;
-            display();
-            wrefresh(win);
-            usleep(speed);
+        }
+        else{
+            hit = true;
         }
         break;
     case Directions::LEFT:
-        X_-=2;
-        display();
-        while (!(detect_collision(map))||X_ > 1)
+        if (X_ > 1)
         { 
-            erase();
             --X_;
-            display();
-            wrefresh(win);
-            usleep(speed-10000);
+        }
+        else{
+            hit = true;
         }
         break;
     case Directions::RIGHT:
-        X_+=2;
-        display();
-        while (!(detect_collision(map)) && X_< (map[0].size()-2))
+        if (X_< (matrix[0].size()-2))
         { 
-            erase();
             ++X_;
-            display();
-            wrefresh(win);
-            usleep(speed-10000);
+        }
+        else{
+            hit = true;
         }
         break;
     default:
         break;
     }
-    erase();
 }

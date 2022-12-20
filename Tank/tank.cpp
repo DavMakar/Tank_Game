@@ -1,46 +1,74 @@
 #include "tank.hpp"
 #include "bullet.hpp"
 
+Tank::Tank(int Y,int X):game_object(Y,X){
+    alive = true;
+}
+
+bool Tank::is_alive(){
+    if(health == 0){
+        alive = false;
+    }
+    return alive;
+}
+
+void Tank::reset(){
+    health = 1;
+    alive = true;
+}
+
 bool Tank::can_move(const Matrix& map){
     switch (direction)
     {
     case Directions::UP:
-        return !(map[Y_-2][X_]);
+        return !(map[Y_-3][X_] || map[Y_-3][X_-1] || map[Y_-3][X_-2]);
     case Directions::DOWN:
-        return !(map[Y_+2][X_]);
+        return !(map[Y_+1][X_] || map[Y_+1][X_-1] || map[Y_+1][X_-2]);
     case Directions::LEFT:
-        return !(map[Y_+1][X_-1] || map[Y_][X_-4]|| map[Y_-1][X_-1]);
+        return !(map[Y_-1][X_-3] || map[Y_-2][X_-3] || map[Y_][X_-3]);
     case Directions::RIGHT:
-        return !(map[Y_][X_+4] || map[Y_-1][X_+1]|| map[Y_+1][X_+1]);
+        return !(map[Y_][X_+1] || map[Y_-1][X_+1] || map[Y_-2][X_+1]);
     default:
         return true;   
     }
 }
 
-void Tank::display_Tank(){
-    for(int i= -1 ;i<2 ;++i){ 
-        mvwprintw(win,Y_ + i,X_-1,tank_pattern[direction][i+1]);
-    } 
-};
+// void Tank::hit_bullet(){
+//     if(Bullets.size()>0){
+//         for(auto bullet : Bullets){
+//             if(((Y_ - bullet->get_y()) <= 2) && ((Y_ - bullet->get_y()) >= 0)){
+//                 if( ((X_ - bullet->get_x()) == 3) || (bullet->get_x() - X_ == 1)){   
+//                 }
+//             }
+//         }
+//     }
+// }
 
-void Tank::erase_Tank(){
-    for(int i= -1 ;i<2 ;++i){ 
-        mvwprintw(win,Y_ + i,X_-1,"   ");
+void Tank::shot(){
+    switch (direction)
+    {
+    case Directions::UP:
+        Bullets.push_back(new Bullet(Y_-3,X_-1,direction));
+        break;
+    case Directions::DOWN:
+        Bullets.push_back(new Bullet(Y_+1,X_-1,direction));
+        break;
+    case Directions::LEFT:
+        Bullets.push_back(new Bullet(Y_-1,X_-3,direction));
+        break;
+    case Directions::RIGHT:
+        Bullets.push_back(new Bullet(Y_-1,X_+1,direction));
+        break;
+    default:
+        break;
     }
-};
-
-void Tank::shot(Matrix & map){
-    Bullet * bullet = new Bullet(win,X_,Y_,direction);
-    bullet->move(map);
-    delete bullet;
 }
 
-void Tank::move(Directions new_direction , const Matrix& map){
+void Tank::move(Directions new_direction , const Matrix& matrix){
     if(new_direction != direction){
         change_direction(new_direction);
     }
-    else if(can_move(map)){
-        erase_Tank();
+    else if(can_move(matrix)){
         switch (direction)
         {
             case Directions::UP:
@@ -59,17 +87,6 @@ void Tank::move(Directions new_direction , const Matrix& map){
                 break;
         }
     }
-};
-
-int Tank::get_x(){
-    return X_;
-};
-int Tank::get_y(){
-    return Y_;
-};
-
-int Tank::get_direction(){
-    return direction;
 };
 
 void Tank::change_direction(int d){

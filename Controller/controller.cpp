@@ -1,56 +1,54 @@
-#include <unordered_map> 
 #include "controller.hpp"
+#include <unistd.h> //usleep
 
-void make_header();
+Controller::Controller(Game & game_model, View & game_scene):game_model_{game_model},
+                                                             game_scene_{game_scene},
+                                                             menu_controller_{game_model_.menu_model_,game_scene_.menu_view_}
+{}
 
-Controller::Controller()
-{
-    initscr();
-    noecho();
-    curs_set(0);
-    make_header();
-    refresh();
+void Controller::game_loop(){
+
+    menu_controller_.menu_loop();
+    
+    if(menu_controller_.allow_to_start){
+        game_scene_.draw_matrix();    
+
+        while(game_model_.is_playing()){
+            process_Input();
+            game_model_.update();
+            game_scene_.render();
+            
+            usleep(20000);   
+        };
+        
+        game_scene_.end_screen();
+        game_model_.set_default();
+        game_loop();
+    }
 }
 
-
-enum Move_controls{
-    UP_KEY = 'w',
-    DOWN_KEY = 's',
-    LEFT_KEY = 'a',
-    RIGHT_KEY = 'd'
-};
-
-void Controller::process_Input(Tank_Game &Game){
-    auto key = wgetch(Game.game_win);
+void Controller::process_Input(){
+    auto key = wgetch(game_scene_.game_win_);
     switch(key){
         case Move_controls::UP_KEY:
-            Game.tank_1.move(Directions::UP,Game.game_map.game_matrix);
+            game_model_.game_map.player_tank.move(Directions::UP,game_model_.game_map.get_matrix());
             break;
         case Move_controls::DOWN_KEY:
-            Game.tank_1.move(Directions::DOWN,Game.game_map.game_matrix);
+            game_model_.game_map.player_tank.move(Directions::DOWN,game_model_.game_map.get_matrix());
             break;
         case Move_controls::LEFT_KEY:
-            Game.tank_1.move(Directions::LEFT,Game.game_map.game_matrix);
+            game_model_.game_map.player_tank.move(Directions::LEFT,game_model_.game_map.get_matrix());
             break;
         case Move_controls::RIGHT_KEY:
-            Game.tank_1.move(Directions::RIGHT,Game.game_map.game_matrix);
+            game_model_.game_map.player_tank.move(Directions::RIGHT,game_model_.game_map.get_matrix());
             break;
         case 'q':
-            Game.end_game();
+            game_model_.end_game();
             break;
         case 'j':
-            Game.tank_1.shot(Game.game_map.game_matrix);
+            game_model_.game_map.player_tank.shot();
             break;
         default:
             break;
     }
-}
-
-void make_header(){
-    mvprintw(0,10,"___________              __       ________                       ");
-    mvprintw(1,10,"\\__    ___/____    ____ |  | __  /  _____/_____    _____   ____  ");
-    mvprintw(2,10,"  |    |  \\__  \\  /    \\|  |/ / /   \\  ___\\__  \\  /     \\_/ __ \\ ");
-    mvprintw(3,10,"  |    |   / __ \\|   |  \\    <  \\    \\_\\  \\/ __ \\|  Y Y  \\  ___/ ");
-    mvprintw(4,10,"  |____|  (____  /___|  /__|_ \\  \\______  (____  /__|_|  /\\___  >");
-    mvprintw(5,10,"               \\/     \\/     \\/         \\/     \\/      \\/     \\/ ");
 }

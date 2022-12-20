@@ -1,17 +1,17 @@
+#pragma once
 #include <vector>
 #include "../Game_object/game_object.hpp"
-
-using Matrix = std::vector<std::vector<int>>;
 
 class Bullet
         :public game_object{
     private:
-        const unsigned int speed = 32768;
+        bool hit = false;
     public:
-        Bullet(WINDOW* win,int x,int y,int dir);
-        void move(Matrix &);
-        void display();
-        bool detect_collision(Matrix &);
-        void erase();
+        const int hit_box_size = 1;
+    public:
+        Bullet(int y,int x,int dir);
+        void move(const Matrix &);
+        bool is_hit_boundary();
+        bool detect_collision(const Matrix &);
 };
 

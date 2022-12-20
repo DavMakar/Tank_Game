@@ -1,12 +1,29 @@
-#include "../Game/game.hpp"
+#ifndef GAME_CONTROLLER_HPP
+#define GAME_CONTROLLER_HPP
 
-//TODO maybe namespace
+#include "../Game/game.hpp"
+#include "../View/view.hpp"
+#include "../Menu/Menu_Controller.hpp"
 
 class Controller
 {
+    private:
+        Game & game_model_;
+        View & game_scene_;
+        
+        enum Move_controls{
+            UP_KEY = 'w',
+            DOWN_KEY = 's',
+            LEFT_KEY = 'a',
+            RIGHT_KEY = 'd'
+        };    
     public:
-        Controller();
+        Menu_Controller menu_controller_;
+
     public:
-        void process_Input(Tank_Game &game); //FIXME Add Draw
+        Controller(Game & , View &);
+        void game_loop();
+        void process_Input();
 };
 
+#endif //GAME_CONTROLLER
