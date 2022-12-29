@@ -6,6 +6,11 @@ Tank 1990 is a multi-directional shooter video game for the Family Computer prod
 
 An arcade version for the Nintendo VS. System would follow, and the game would eventually end up with the Virtual Console release for the Wii and Wii U. There was also a related Game Boy game of the same name dating back to 1991, which was developed and published by Nova Games.
 
+## Screenshots
+
+![menu](menu.png)
+![game](gameplay.png)
+
 ## What you need
 
 You must use linux system
