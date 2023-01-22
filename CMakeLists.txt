@@ -9,5 +9,4 @@ add_executable(Tank_Game main.cpp ${SOURCES})
 
 target_link_libraries(Tank_Game -lncurses)
 
-# Set the C++ standard to C++11
 set_property(TARGET Tank_Game PROPERTY CXX_STANDARD 14)
