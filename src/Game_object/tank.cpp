@@ -1,5 +1,4 @@
 #include "tank.hpp"
-#include "bullet.hpp"
 
 Tank::Tank(int Y,int X):Game_object(Y,X){
     alive = true;
@@ -30,6 +29,26 @@ bool Tank::can_move(const Matrix& map){
         return !(map[Y_][X_+1] || map[Y_-1][X_+1] || map[Y_-2][X_+1]);
     default:
         return true;   
+    }
+}
+
+void Tank::move_in_current_direction(){
+    switch (direction)
+    {
+        case Directions::UP:
+            Y_-=1;
+            break;
+        case Directions::DOWN:
+            Y_+=1;
+            break;
+        case Directions::LEFT:
+            X_-=1;
+            break;
+        case Directions::RIGHT:
+            X_+=1;
+            break;
+        default:
+            break;
     }
 }
 
@@ -64,23 +83,7 @@ void Tank::move(Directions new_direction , const Matrix& matrix){
         change_direction(new_direction);
     }
     else if(can_move(matrix)){
-        switch (direction)
-        {
-            case Directions::UP:
-                Y_-=1;
-                break;
-            case Directions::DOWN:
-                Y_+=1;
-                break;
-            case Directions::LEFT:
-                X_-=1;
-                break;
-            case Directions::RIGHT:
-                X_+=1;
-                break;
-            default:
-                break;
-        }
+        move_in_current_direction();
     }
 };
 

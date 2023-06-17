@@ -1,8 +1,6 @@
 #ifndef GAME_OBJECT_HPP
 #define GAME_OBJECT_HPP
 
-using Matrix = std::vector<std::vector<int>>;
-
 enum Directions {
     UP = 0,
     DOWN = 1,
@@ -24,15 +22,4 @@ class Game_object
         int get_x();
         int get_direction();
 };
-
-inline int Game_object::get_x(){
-    return X_;
-};
-inline int Game_object::get_y(){
-    return Y_;
-};
-inline int Game_object::get_direction(){
-    return direction;
-};
-
 #endif //GAME_OBJECT_HPP

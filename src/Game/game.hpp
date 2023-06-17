@@ -15,6 +15,8 @@ private:
 
 public:
     
+    Game();
+    
     Map game_map;
     Menu_Model menu_model_{std::vector<std::string>{"Play", "Options", "HowToPlay", "Quit"}};
     
@@ -25,9 +27,6 @@ public:
         pos_x = 10,
         pos_y = 10
     };
-
-    Game();
-    ~Game();
 
     Matrix get_matrix();
 
@@ -46,8 +45,8 @@ public:
     void set_default();
     void update();
     
-    
-    
+    ~Game();
+
 };
 
 #endif // TANK_GAME_HPP

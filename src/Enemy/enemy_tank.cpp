@@ -4,7 +4,7 @@
 void Enemy_tank::action(const Matrix & matrix){
     auto die = roll_die();
     if(die <= 3){
-        move(matrix);
+        move(Directions::UP,matrix);
     }
     else if(die == 5){
         change_direction(random_direction());
@@ -16,27 +16,11 @@ void Enemy_tank::action(const Matrix & matrix){
     }
 }
 
-void Enemy_tank::move(const Matrix & matrix){
+void Enemy_tank::move(Directions new_direction,const Matrix& matrix){
     if(!(can_move(matrix))){
         change_direction(random_direction());
     }else{
-        switch (direction)
-        {
-            case Directions::UP:
-                Y_-=1;
-                break;
-            case Directions::DOWN:
-                Y_+=1;
-                break;
-            case Directions::LEFT:
-                X_-=1;
-                break;
-            case Directions::RIGHT:
-                X_+=1;
-                break;
-            default:
-                break;
-        }
+        move_in_current_direction();
     }
 }
 

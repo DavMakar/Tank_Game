@@ -2,8 +2,6 @@
 #include <chrono>
 #include <unistd.h> //usleep
 
-
-
 Controller::Controller(Game & game_model, View & game_scene)
                            :game_model_{game_model},
                             game_scene_{game_scene},
@@ -39,7 +37,7 @@ void Controller::process_input(){
 }
 
 void Controller::handle_input(auto key){
-    switch(key){
+    switch(static_cast<Move_controls>(key)){
         case Move_controls::UP_KEY:
             game_model_.game_map.player_tank.move(Directions::UP,game_model_.game_map.get_matrix());
             break;

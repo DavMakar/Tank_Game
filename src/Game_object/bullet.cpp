@@ -8,7 +8,7 @@ bool Bullet::is_hit_boundary(){
     return hit;
 }
 
-void Bullet::move(const Matrix & matrix){
+void Bullet::move(const Matrix& matrix){
     switch (direction)
     {
     case Directions::UP:

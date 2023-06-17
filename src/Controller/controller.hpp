@@ -11,7 +11,7 @@ class Controller
         Game & game_model_;
         View & game_scene_;
         
-        enum Move_controls{
+        enum class Move_controls{
             UP_KEY = 'w',
             DOWN_KEY = 's',
             LEFT_KEY = 'a',

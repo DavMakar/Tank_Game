@@ -13,7 +13,7 @@ class Enemy_tank
     public:
         Enemy_tank(int Y,int X): Tank(Y,X){};
         void action(const Matrix & );
-        void move(const Matrix &);
+        void move(Directions new_direction,const Matrix &) override;
         void reset_YX();
 };
 

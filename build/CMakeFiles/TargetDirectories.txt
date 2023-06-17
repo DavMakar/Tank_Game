@@ -1,3 +1,0 @@
-/home/davit/Desktop/Tank_1990/build/CMakeFiles/rebuild_cache.dir
-/home/davit/Desktop/Tank_1990/build/CMakeFiles/edit_cache.dir
-/home/davit/Desktop/Tank_1990/build/CMakeFiles/Tank_Game.dir

@@ -11,8 +11,11 @@ void Map::fill_matrix(){
 void Map::reset(){
     enemy_tank.reset_YX();
     player_tank.reset_YX();
-    for(auto i = 0; i < game_matrix.size(); ++i)
-        fill(game_matrix[i].begin(),game_matrix[i].end(),0);
+    for(auto& row : game_matrix){
+        std::fill(row.begin(),row.end(), 0);
+    }
+    // for(auto i = 0; i < game_matrix.size(); ++i)
+    //    fill(game_matrix[i].begin(),game_matrix[i].end(),0);
 }
 
 void Map::add_boundaries(){
@@ -31,6 +34,38 @@ void Map::add_walls(){
     }
 };
 
+void Map::handle_bullets(std::vector<Bullet*>& bullets, Tank& currentTank, Tank& otherTank) {
+    for (auto it = bullets.begin(); it != bullets.end();) {
+        auto bullet = *it;
+        auto y = bullet->get_y();
+        auto x = bullet->get_x();
+
+        if (bullet->is_hit_boundary()) {
+            delete bullet;
+            it = bullets.erase(it);
+        } else if (is_wall(game_matrix[y][x])) {
+            delete bullet;
+            it = bullets.erase(it);
+            make_empty(y, x);
+        } else if (bullet_collision_tank(x, y, bullet->hit_box_size, otherTank.get_x(), otherTank.get_y(), otherTank.hit_box_size)) {
+            delete bullet;
+            it = bullets.erase(it);
+            make_empty(y, x);
+
+            --otherTank.health;
+
+            if (otherTank.is_destroyed()) {
+                make_empty(currentTank.get_y(), currentTank.get_x());
+                break;
+            }
+        } else {
+            bullet->move(game_matrix);
+            make_bullet(y, x);
+            ++it;
+        }
+    }
+}
+
 void Map::update(){
     for(int i = 1; i < height-1 ; ++i){
         for(int j = 1 ; j < width-1 ; ++j){
@@ -44,67 +79,13 @@ void Map::update(){
     
     make_tank(player_tank.get_y(),player_tank.get_x());
     make_enemy(enemy_tank.get_y(),enemy_tank.get_x());
-    
-    if(!player_tank.Bullets.empty()){
-        for(auto bullet = player_tank.Bullets.begin(); bullet != player_tank.Bullets.end();){
-            auto y = (*bullet)->get_y();
-            auto x = (*bullet)->get_x();
-            
-            if((*bullet)->is_hit_boundary()){
-                delete (*bullet); 
-                bullet = player_tank.Bullets.erase(bullet);
-            }else if(is_wall(game_matrix[y][x])){
-                delete (*bullet); 
-                bullet = player_tank.Bullets.erase(bullet);
-                make_empty(y,x);
-            }else if(bullet_collision_tank(x,y,(*bullet)->hit_box_size, enemy_tank.get_x(),enemy_tank.get_y(),enemy_tank.hit_box_size)){
-                delete (*bullet); 
-                bullet = player_tank.Bullets.erase(bullet);
-                make_empty(y,x);
-                 
-                --enemy_tank.health;
-                    
-                if(enemy_tank.is_destroyed()){
-                    make_empty(player_tank.get_y(),player_tank.get_x());
-                    break;
-                };
-            }else{
-                (*bullet)->move(game_matrix);
-                make_bullet(y,x);
-                ++bullet;
-            }
-        }
-    };
-    if(!enemy_tank.Bullets.empty()){
-        for(auto bullet = enemy_tank.Bullets.begin(); bullet != enemy_tank.Bullets.end();){
-            auto y = (*bullet)->get_y();
-            auto x = (*bullet)->get_x();
-            if((*bullet)->is_hit_boundary()){
-                delete (*bullet); 
-                bullet = enemy_tank.Bullets.erase(bullet);
-            }else if(is_wall(game_matrix[y][x])){
-                delete (*bullet); 
-                bullet = enemy_tank.Bullets.erase(bullet);
-                make_empty(y,x);
-            }else if(bullet_collision_tank(x,y,(*bullet)->hit_box_size, player_tank.get_x(),player_tank.get_y(),player_tank.hit_box_size)){ 
-                delete (*bullet); 
-                bullet = enemy_tank.Bullets.erase(bullet);
-                make_empty(y,x);
 
-                --player_tank.health;
-                
-                if(player_tank.is_destroyed()){
-                    make_empty(player_tank.get_y(),player_tank.get_x());
-                    break;
-                };
-            }
-            else{
-                (*bullet)->move(game_matrix);
-                make_bullet(y,x);
-                ++bullet;
-            }
-        }   
-    };
+    if(!player_tank.Bullets.empty()){
+        handle_bullets(player_tank.Bullets,player_tank,enemy_tank);
+    }
+    if(!enemy_tank.Bullets.empty()){
+        handle_bullets(enemy_tank.Bullets,enemy_tank,player_tank);
+    }
 }
 
 bool Map::bullet_collision_tank(const int bullet_x ,const int bullet_y ,const int bullet_size,

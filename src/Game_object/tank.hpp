@@ -5,9 +5,12 @@
 #include "game_object.hpp"
 #include "bullet.hpp"
 
+
+using Matrix = std::vector<std::vector<int>>;
+
 class Tank 
     : public Game_object{
-
+        
     public:
         std::vector <Bullet*> Bullets; 
         int health = 1;
@@ -17,7 +20,7 @@ class Tank
     public:
         Tank(int Y,int X);
 
-        void move(Directions new_direction, const Matrix& matrix);
+        virtual void move(Directions new_direction, const Matrix& map);
         void shot();
         void reset();
         void unload_bullets();
@@ -25,7 +28,8 @@ class Tank
         
     protected:
         void change_direction(int);
-        bool can_move(const Matrix & map);
+        bool can_move(const Matrix& map);
+        void move_in_current_direction();
 };          
 
 #endif //TANK_CLASS_HPP

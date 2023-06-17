@@ -16,8 +16,7 @@ class Map{
         enum Tank_coords { player_starting_y = 10 , player_starting_x = 10 , enemy_starting_y = 10 , enemy_starting_x = 90};
 
     public:
-        enum Matrix_cell_type{empty = 0, boundary = 1 , wall = 2,  bullet = 3, player = 1 , enemy = 4};
-    
+        enum Matrix_cell_type{empty = 0, boundary = 1, player = 1 , wall = 2,  bullet = 3, enemy = 4}; 
     public: 
         Matrix game_matrix;
         Player_tank player_tank;
@@ -45,6 +44,7 @@ class Map{
     private:
         bool bullet_collision_tank(const int bullet_x,const int bullet_y,const int bullet_size ,
                                     const int tank_x ,const int tank_y ,const int tank_size);
+        void handle_bullets(std::vector<Bullet*>& bullets, Tank& currentTank, Tank& otherTank);
         bool is_moveable_object(const int matrix_ceil);
         bool is_wall(const int matrix_element);
         void add_boundaries();

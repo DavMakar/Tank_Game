@@ -3,6 +3,8 @@
 #include <vector>
 #include "game_object.hpp"
 
+using Matrix = std::vector<std::vector<int>>;
+
 class Bullet
         :public Game_object{
     private:
